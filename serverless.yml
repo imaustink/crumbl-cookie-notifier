@@ -1,0 +1,55 @@
+service: crumbl-cookie-flavor-tracker
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-localstack
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: '*'
+    - Effect: Allow
+      Action:
+        - sns:*
+      Resource: '*'
+
+custom:
+  localstack:
+    stages:
+      - local
+    lambda:
+      mountCode: true
+    autostart: true
+
+functions:
+  cronHandler:
+    handler: handler.run
+    environment:
+      TARGET_URL: "https://crumblcookies.com/"
+      PHONE_NUMBERS: ${env:PHONE_NUMBERS}
+      COOKIES_TABLE_NAME: ${self:resources.Resources.CookiesTable.Properties.TableName}
+      # AWS_DYNAMO_ENDPOINT: "http://localhost:8000"
+    events:
+      # Invoke Lambda function Every 15 minutes, between 06:00 PM and 11:59 PM, only on Sunday
+      - schedule: cron(0/15 2-8 ? * SUN *)
+
+resources:
+  Resources:
+    CookiesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-cookies
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH

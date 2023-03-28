@@ -1,0 +1,21 @@
+{
+  "name": "crumbl-cookie-flavor-tracker",
+  "version": "1.0.0",
+  "description": "Example of creating a function that runs as a cron job using the serverless `schedule` event",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "start": "serverless deploy --stage local"
+  },
+  "devDependencies": {
+    "serverless-localstack": "^1.0.1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sns": "^3.231.0",
+    "@aws-sdk/client-sts": "^3.231.0",
+    "@aws-sdk/credential-provider-node": "^3.231.0",
+    "@aws-sdk/lib-dynamodb": "^3.231.0",
+    "axios": "^1.2.1",
+    "cheerio": "^1.0.0-rc.12"
+  }
+}
